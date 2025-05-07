@@ -1,0 +1,163 @@
+# Gerekli kütüphaneleri yükleme
+library(ggplot2)
+
+# Yaş grupları ve ortalama günlük sosyal medya kullanım süreleri (saat cinsinden)
+yas_gruplari <- c("6-10", "11-15", "16-24")
+kullanim_sureleri <- c(1.0, 2.0, 2.5)  # Tahmini değerler
+
+# Veri çerçevesi oluşturma
+veri <- data.frame(
+  YasGrubu = yas_gruplari,
+  GunlukSure = kullanim_sureleri
+)
+
+# Çubuk grafik oluşturma
+ggplot(veri, aes(x = YasGrubu, y = GunlukSure, fill = YasGrubu)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = GunlukSure), vjust = -0.5, size = 5) +
+  labs(
+    title = "Yaş Gruplarına Göre Günlük Sosyal Medya Kullanımı (Saat)",
+    x = "Yaş Grubu",
+    y = "Günlük Kullanım Süresi (saat)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+2.ci kod
+
+# Gerekli kütüphaneler
+library(ggplot2)
+library(ggrepel)
+
+# Veri seti
+platformlar <- c("WhatsApp", "YouTube", "Instagram", "Facebook", "X", "Telegram", "TikTok", "Snapchat", "Bip", "Diğer")
+kullanim_oranlari <- c(86.2, 71.3, 65.4, 49.4, 22.7, 14.8, 19.1, 9.8, 3.1, 0.8)
+
+# Veri çerçevesi
+veri <- data.frame(Platform = platformlar, Oran = kullanim_oranlari)
+
+# Yüzdelik oranları normalize et
+veri$Yuzde <- veri$Oran / sum(veri$Oran) * 100
+
+# Etiketler
+veri$YuzdeLabel <- paste0(veri$Platform, ": ", round(veri$Yuzde, 1), "%")
+
+# Kümülatif toplamdan pozisyon hesapla
+veri <- veri[order(-veri$Yuzde), ]
+veri$pos <- cumsum(veri$Yuzde) - veri$Yuzde / 2
+
+# Pasta grafiği
+ggplot(veri, aes(x = "", y = Yuzde, fill = Platform)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  geom_text_repel(aes(label = YuzdeLabel, y = pos), 
+                  color = "black", size = 4, nudge_x = 1, show.legend = FALSE,
+                  segment.size = 0.3, segment.color = "gray") +
+  labs(title = "Türkiye'de 2024 Sosyal Medya Kullanım Oranları") +
+  theme_void() +
+  theme(legend.position = "none")
+
+3. kod 
+
+# Gerekli kütüphaneler
+library(ggplot2)
+library(tidyr)
+
+# Örnek veri seti
+veri <- data.frame(
+  Saat = c(0.5, 1, 2, 3, 4, 5, 6),
+  Depresyon = c(5, 6, 7.5, 9, 10.5, 12, 13.5),
+  Anksiyete = c(4, 5.5, 7, 8.5, 10, 11.5, 13)
+)
+
+# Veriyi uzun formata dönüştürme
+veri_long <- pivot_longer(veri, cols = c("Depresyon", "Anksiyete"),
+                          names_to = "Skor_Tipi", values_to = "Skor")
+
+# Çizgi grafiği oluşturma
+ggplot(veri_long, aes(x = Saat, y = Skor, color = Skor_Tipi)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  labs(title = "Sosyal Medya Kullanımı ve Ruh Sağlığı Skorları",
+       x = "Günlük Sosyal Medya Kullanım Süresi (saat)",
+       y = "Skor",
+       color = "Skor Tipi") +
+  theme_minimal()
+
+,4. kod
+
+# Gerekli kütüphane
+library(ggplot2)
+
+# Veri seti
+belirtiler <- c(
+  "30 dakikada bir telefon kontrolu",
+  "Uyumadan once/uyandıktan sonra telefon kontrolu",
+  "Yemek yerken/TV izlerken telefon kullanımı",
+  "En az bir dijital bağımlılık belirtisi"
+)
+
+oranlar <- c(32.6, 3.4, 3.4, 58.6)
+
+veri <- data.frame(Belirti = belirtiler, Oran = oranlar)
+
+# Sütun grafiği oluşturma
+ggplot(veri, aes(x = reorder(Belirti, Oran), y = Oran)) +
+  geom_col(fill = "#0073C2FF") +
+  coord_flip() +
+  labs(title = "2024 Türkiye'de Çocuklarda Dijital Bağımlılık Belirtileri",
+       x = "Belirti",
+       y = "Görülme Oranı (%)") +
+  theme_minimal()
+
+5. kod 
+
+# Gerekli kütüphane
+library(ggplot2)
+
+# Örnek veri seti: Sosyal medya bağımlılık puanları
+# Bu veriler, ilgili araştırmadan alınan ortalama puanlar etrafında oluşturulmuş örnek verilerdir.
+set.seed(123)  # Sonuçların tekrarlanabilir olması için
+puanlar <- c(
+  rnorm(178, mean = 12.49, sd = 2),   # Düşük düzey
+  rnorm(280, mean = 21.43, sd = 3),   # Orta düzey
+  rnorm(42, mean = 34.10, sd = 2.5)   # Yüksek düzey
+)
+
+# Histogram oluşturma
+ggplot(data.frame(Puan = puanlar), aes(x = Puan)) +
+  geom_histogram(binwidth = 2, fill = "#69b3a2", color = "black") +
+  labs(
+    title = "Gençlerde Sosyal Medya Bağımlılığı Dağılımı",
+    x = "Bağımlılık Puanı",
+    y = "Kişi Sayısı"
+  ) +
+  theme_minimal()
+
+6. kod 
+
+# Gerekli kütüphane
+library(ggplot2)
+
+# Örnek veri seti (Sosyal medya kullanım amaçları)
+amaçlar <- c("Eğlence", "Eğitim", "İletişim", "Haber Takibi", "İş/Profesyonel Amaç")
+oranlar <- c(45, 15, 20, 10, 10)
+
+# Veri çerçevesi oluşturma
+veri <- data.frame(Amaç = amaçlar, Oran = oranlar)
+
+# Pasta grafiği oluşturma
+ggplot(veri, aes(x = "", y = Oran, fill = Amac) +
+  geom_bar(stat = "identity", width = 1) +  # Veriyi çubuk olarak çizeceğiz
+  coord_polar(theta = "y") +  # Çubukları dairesel yapacak
+  labs(
+    title = "Türkiye'deki Gençlerin Sosyal Medya Kullanım Amaçları (2024)",
+    x = "",
+    y = ""
+  ) +
+  theme_void() +  # Grafik etrafındaki gereksiz elemanları kaldırır
+  theme(
+    axis.text = element_blank(),   # Ekseni gizle
+    axis.title = element_blank()   # Ekseni başlıklarını gizle
+  )
+
