@@ -1,0 +1,31 @@
+# Gerekli kütüphaneler
+library(ggplot2)
+library(ggrepel)
+
+# Veri seti
+platformlar <- c("WhatsApp", "YouTube", "Instagram", "Facebook", "X", "Telegram", "TikTok", "Snapchat", "Bip", "Diğer")
+kullanim_oranlari <- c(86.2, 71.3, 65.4, 49.4, 22.7, 14.8, 19.1, 9.8, 3.1, 0.8)
+
+# Veri çerçevesi
+veri <- data.frame(Platform = platformlar, Oran = kullanim_oranlari)
+
+# Yüzdelik oranları normalize et
+veri$Yuzde <- veri$Oran / sum(veri$Oran) * 100
+
+# Etiketler
+veri$YuzdeLabel <- paste0(veri$Platform, ": ", round(veri$Yuzde, 1), "%")
+
+# Kümülatif toplamdan pozisyon hesapla
+veri <- veri[order(-veri$Yuzde), ]
+veri$pos <- cumsum(veri$Yuzde) - veri$Yuzde / 2
+
+# Pasta grafiği
+ggplot(veri, aes(x = "", y = Yuzde, fill = Platform)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  geom_text_repel(aes(label = YuzdeLabel, y = pos), 
+                  color = "black", size = 4, nudge_x = 1, show.legend = FALSE,
+                  segment.size = 0.3, segment.color = "gray") +
+  labs(title = "Türkiye'de 2024 Sosyal Medya Kullanım Oranları") +
+  theme_void() +
+  theme(legend.position = "none")
