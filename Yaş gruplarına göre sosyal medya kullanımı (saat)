@@ -1,0 +1,24 @@
+# Gerekli kütüphaneleri yükleme
+library(ggplot2)
+
+# Yaş grupları ve ortalama günlük sosyal medya kullanım süreleri (saat cinsinden)
+yas_gruplari <- c("6-10", "11-15", "16-24")
+kullanim_sureleri <- c(1.0, 2.0, 2.5)  # Tahmini değerler
+
+# Veri çerçevesi oluşturma
+veri <- data.frame(
+  YasGrubu = yas_gruplari,
+  GunlukSure = kullanim_sureleri
+)
+
+# Çubuk grafik oluşturma
+ggplot(veri, aes(x = YasGrubu, y = GunlukSure, fill = YasGrubu)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = GunlukSure), vjust = -0.5, size = 5) +
+  labs(
+    title = "Yaş Gruplarına Göre Günlük Sosyal Medya Kullanımı (Saat)",
+    x = "Yaş Grubu",
+    y = "Günlük Kullanım Süresi (saat)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
